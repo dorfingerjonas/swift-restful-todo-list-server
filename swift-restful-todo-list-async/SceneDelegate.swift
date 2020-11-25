@@ -1,9 +1,9 @@
 //
 //  SceneDelegate.swift
-//  swift-restful-todo-list
+//  swift-restful-todo-list-async
 //
-//  Created by Administrator on 18.11.20.
-//  Copyright © 2020 Administrator. All rights reserved.
+//  Created by Administrator on 25.11.20.
+//  Copyright © 2020 Jonas Dorfinger. All rights reserved.
 //
 
 import UIKit

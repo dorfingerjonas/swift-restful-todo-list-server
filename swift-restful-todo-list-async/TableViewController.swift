@@ -2,11 +2,15 @@ import UIKit
 
 class TableViewController: UITableViewController {
     
+    let queue = DispatchQueue(label: "queue1")
     var model = Model()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.download()
+        
+        queue.async {
+            self.download()
+        }
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -17,19 +21,20 @@ class TableViewController: UITableViewController {
         return model.todos.count
     }
 
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "todo", for: indexPath)
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> TableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "todo", for: indexPath) as! TableViewCell
+        let todo = model.todos[indexPath.row]
         
-        cell.textLabel?.text = model.todos[indexPath.row].title
-        cell.detailTextLabel?.text = model.todos[indexPath.row].completed ? "Completed" : "Not completed"
+        cell.title.text = todo.title
+        cell.completed.isOn = todo.completed
 
         return cell
     }
     
     func download() {
-        let model = Model()
+        let todoModel = Model()
         
-        if let url = URL(string: "https://jsonplaceholder.typicode.com/todos") {
+        if let url = URL(string: "http://jsonplaceholder.typicode.com/todos") {
             if let data = try? Data(contentsOf: url) {
                 if let json = try? JSONSerialization.jsonObject(with: data, options: []), let array = json as? [Any] {
                     for obj in array {
@@ -41,11 +46,14 @@ class TableViewController: UITableViewController {
                             todo.userId = dict["userId"] as! Int
                             todo.completed = dict["completed"] as! Bool
                             
-                            model.todos.append(todo)
+                            todoModel.todos.append(todo)
                         }
                     }
                     
-                    self.model = model
+                    DispatchQueue.main.async {
+                        self.model = todoModel
+                        self.tableView.reloadData()
+                    }
                 }
             } else {
                 print("Download failed")
@@ -55,3 +63,5 @@ class TableViewController: UITableViewController {
         }
     }
 }
+
+
