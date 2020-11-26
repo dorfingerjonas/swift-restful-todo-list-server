@@ -34,7 +34,7 @@ class TableViewController: UITableViewController {
     func download() {
         let todoModel = Model()
         
-        if let url = URL(string: "http://jsonplaceholder.typicode.com/todos") {
+        if let url = URL(string: "http://localhost:3000/todos") {
             if let data = try? Data(contentsOf: url) {
                 if let json = try? JSONSerialization.jsonObject(with: data, options: []), let array = json as? [Any] {
                     for obj in array {
